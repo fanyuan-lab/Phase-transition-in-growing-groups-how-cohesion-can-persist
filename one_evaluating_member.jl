@@ -10,8 +10,8 @@ function calc_types(N::Int, η::Float64, N0::Int, rule::String)
     if rule == "UC" #UC case
         for t in N0+1:N #group size N
             while true
-                types[t] = rand([1, -1]) #candidate t is of type +1/-1 with equal probability
-                # types[t] = sample([1,-1],pweights([1/4,3/4])) #candidate t is of type +1/-1 with probability f/(1-f), here f=1/4
+                f = 1/2 #f∈[0,1]
+                types[t] = sample([1,-1],pweights([f,1-f])) #candidate t is of type +1/-1 with probability f/(1-f)
                 evaluator = rand(1:t-1) #one group member is chosen uniformly, i.e. UC case
                 types[t] == types[evaluator] ? ((η < rand()) && (R[t, evaluator] = 1)) : ((η > rand()) && (R[t, evaluator] = 1))
                 if R[t,evaluator] == 1
@@ -25,8 +25,8 @@ function calc_types(N::Int, η::Float64, N0::Int, rule::String)
         for t in N0+1:N
             evaluator = 0
             while true
-                types[t] = rand([1, -1]) #candidate t is of type +1/-1 with equal probability
-                # types[t] = sample([1,-1],pweights([1/4,3/4])) #candidate t is of type +1/-1 with probability f/(1-f), here f=1/4
+                f = 1/2 #f∈[0,1]
+                types[t] = sample([1,-1],pweights([f,1-f])) #candidate t is of type +1/-1 with probability f/(1-f)
                 evaluator = sample([1:t-1;], pweights(counters ./ sum(counters))) #preferential attachment, i.e. PA case
                 types[t] == types[evaluator] ? ((η < rand()) ? (R[t, evaluator] = 1) : (R[t, evaluator] = -1)) : ((η > rand()) ? (R[t, evaluator] = 1) : (R[t, evaluator] = -1))
                 R[t, evaluator] == -1 ? ((R[t, evaluator] = 0); continue) : break
@@ -38,8 +38,8 @@ function calc_types(N::Int, η::Float64, N0::Int, rule::String)
     elseif rule == "DS" #Benchmark: Dictatorship 
         for t in N0+1:N 
             while true
-                types[t] = rand([1, -1]) #candidate t is of type +1/-1 with equal probability
-                # types[t] = sample([1,-1],pweights([1/4,3/4])) #candidate t is of type +1/-1 with probability f/(1-f), here f=1/4
+                f = 1/2 #f∈[0,1]
+                types[t] = sample([1,-1],pweights([f,1-f])) #candidate t is of type +1/-1 with probability f/(1-f)
                 types[t] == 1 ? ((rand() < 1-η) ? break : nothing) : ((rand() < η) ? break : nothing)
             end
         end
