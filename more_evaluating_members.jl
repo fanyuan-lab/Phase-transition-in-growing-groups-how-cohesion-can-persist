@@ -3,9 +3,9 @@ using Random, StatsBase, Statistics
 Random.seed!(0)
 
 function groupFormation(N::Int, η::Float64)
-    c = 2 #initial positive founders
-    n = 2 #number of admitted nodes
-    m = c #m evaluating members
+    c = 2 #the number of founders
+    n = 2 #the number of admitted members
+    m = c #m evaluating members at each time step
     while n < N
         w = (1 - 2η) * c / n + η
         f = 1 / 2 #f∈[0,1]
