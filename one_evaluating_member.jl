@@ -2,7 +2,7 @@ using Random, Statistics, StatsBase
 
 Random.seed!(0)
 
-function calc_types(N::Int, η::Float64, N0::Int, rule::String, f::Float64)
+function groupFormation(N::Int, η::Float64, N0::Int, rule::String, f::Float64)
     R = zeros(Int, N, N) #relation matrix
     founders = [1:Int(N0);] #founder members
     types = zeros(Int, N) #types of all group members 
@@ -48,7 +48,7 @@ end
 function calc_cohesion(N::Int, η::Float64, N0::Int, rule::String, f::Float64; iterations=10000)
     cohesion_vec = zeros(iterations)
     for iter in 1:iterations
-        types = calc_types(N, η, N0, rule, f)
+        types = groupFormation(N, η, N0, rule, f)
         cohesion = sum(types .== 1) / N
         cohesion_vec[iter] = cohesion
     end
