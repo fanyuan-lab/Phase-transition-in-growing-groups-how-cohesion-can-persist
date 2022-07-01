@@ -4,7 +4,7 @@ Random.seed!(0)
 
 function groupFormation(N::Int, η::Float64, f::Float64, m::Int)
     c = m #initial positive founders
-    n = m #number of admitted nodes
+    n = m #number of admitted members
     while n < N
         w = (1 - 2η) * c / n + η
         tp = f * w^m / (f * w^m + (1 - f) * (1 - w)^m)
