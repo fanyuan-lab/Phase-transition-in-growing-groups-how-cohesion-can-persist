@@ -2,7 +2,7 @@ using Random, Statistics, StatsBase
 
 Random.seed!(0)
 
-function calc_types(N::Int, η::Float64, N0::Int, rule::String)
+function calc_types(N::Int, η::Float64, N0::Int, rule::String, f::Float64)
     R = zeros(Int, N, N) #relation matrix
     founders = [1:Int(N0);] #founder members
     types = zeros(Int, N) #types of all group members 
@@ -10,7 +10,6 @@ function calc_types(N::Int, η::Float64, N0::Int, rule::String)
     if rule == "UC" #UC case
         for t in N0+1:N #group size N
             while true
-                f = 1/2 #f∈[0,1]
                 types[t] = sample([1,-1],pweights([f,1-f])) #candidate t is of type +1/-1 with probability f/(1-f)
                 evaluator = rand(1:t-1) #one group member is chosen uniformly, i.e. UC case
                 types[t] == types[evaluator] ? ((η < rand()) && (R[t, evaluator] = 1)) : ((η > rand()) && (R[t, evaluator] = 1))
@@ -25,7 +24,6 @@ function calc_types(N::Int, η::Float64, N0::Int, rule::String)
         for t in N0+1:N
             evaluator = 0
             while true
-                f = 1/2 #f∈[0,1]
                 types[t] = sample([1,-1],pweights([f,1-f])) #candidate t is of type +1/-1 with probability f/(1-f)
                 evaluator = sample([1:t-1;], pweights(counters ./ sum(counters))) #preferential attachment, i.e. PA case
                 types[t] == types[evaluator] ? ((η < rand()) ? (R[t, evaluator] = 1) : (R[t, evaluator] = -1)) : ((η > rand()) ? (R[t, evaluator] = 1) : (R[t, evaluator] = -1))
@@ -38,7 +36,6 @@ function calc_types(N::Int, η::Float64, N0::Int, rule::String)
     elseif rule == "DS" #Benchmark: Dictatorship 
         for t in N0+1:N 
             while true
-                f = 1/2 #f∈[0,1]
                 types[t] = sample([1,-1],pweights([f,1-f])) #candidate t is of type +1/-1 with probability f/(1-f)
                 types[t] == 1 ? ((rand() < 1-η) ? break : nothing) : ((rand() < η) ? break : nothing)
             end
@@ -48,10 +45,10 @@ function calc_types(N::Int, η::Float64, N0::Int, rule::String)
 end
 
 
-function calc_cohesion(N::Int, η::Float64, N0::Int, rule::String; iterations=10000)
+function calc_cohesion(N::Int, η::Float64, N0::Int, rule::String, f::Float64; iterations=10000)
     cohesion_vec = zeros(iterations)
     for iter in 1:iterations
-        types = calc_types(N, η, N0, rule)
+        types = calc_types(N, η, N0, rule, f)
         cohesion = sum(types .== 1) / N
         cohesion_vec[iter] = cohesion
     end
