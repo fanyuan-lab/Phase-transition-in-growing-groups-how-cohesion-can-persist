@@ -48,7 +48,7 @@ function calc_types(N::Int, η::Float64, N0::Int, rule::String)
 end
 
 
-function calc_cohesion(N::Int, η::Float64, N0::Int, rule::String; iterations=1000)
+function calc_cohesion(N::Int, η::Float64, N0::Int, rule::String; iterations=10000)
     cohesion_vec = zeros(iterations)
     for iter in 1:iterations
         types = calc_types(N, η, N0, rule)
